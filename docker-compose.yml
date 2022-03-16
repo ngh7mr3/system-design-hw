@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+
+  mysql-db:
+    build:
+      context: mysql-db
+      dockerfile: Dockerfile
+    container_name: mysql-db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_DATABASE: 'stud'
+      MYSQL_USER: 'stud'
+      MYSQL_PASSWORD: 'stud'
