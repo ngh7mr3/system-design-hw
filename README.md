@@ -12,7 +12,5 @@
         - [ ] HTTP `GET` by first_name & last_name
         - [ ] HTTP `POST` for root
             > POST parameters are: login, first_name, last_name and age.
-    - [ ] Tests
-        - [ ] Unit
-        - [ ] Integration
-    - [ ] Dockerize
+    - [ ] Unit tests
+    - [x] Dockerize
