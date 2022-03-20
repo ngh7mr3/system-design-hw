@@ -2,31 +2,27 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 #include "RequestHandlerFactory.h"
 
-#include <Poco/Net/HTTPServer.h>
-
+#include <Poco/Util/ServerApplication.h>
+#include <Poco/Util/Application.h>
+#include <Poco/Util/OptionSet.h>
 
 namespace http_server
 {
 
-class HttpServer
+class HttpServer : public Poco::Util::ServerApplication
 {
-    using PocoServerType = Poco::Net::HTTPServer;
-    using ServerPointerType = std::shared_ptr<PocoServerType>;
 public:
+    HttpServer();
+    ~HttpServer();
 
-    HttpServer(int port);
-
-    void Start();
-
-    void Stop();
-
-private:
-   ServerPointerType mServerInstance; 
-
-   int mPort;
+protected:
+    void initialize(Poco::Util::Application &self);
+    void uninitialize();
+    void defineOptions(Poco::Util::OptionSet &options);
+    int main(const std::vector<std::string> &args);
 };
-
 
 }
