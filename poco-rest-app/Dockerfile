@@ -19,11 +19,15 @@ RUN cd poco && mkdir cmake-build && cd cmake-build && cmake .. && cmake --build 
 FROM builder as src
 COPY . /server
 RUN cd /server && mkdir bin && cd bin && cmake .. && cmake --build . --target install
-RUN echo $(ldd /server/bin/server)
 
 # maybe somehow copy only libraries
 WORKDIR /server
 RUN ./bin/gtests
 
 EXPOSE 8080
+
+### https://github.com/pocoproject/poco/issues/2543
+ENV LD_LIBRARY_PATH=/usr/local/lib
+###
+
 CMD ["./bin/server"]
