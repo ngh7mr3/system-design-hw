@@ -1,16 +1,19 @@
 #pragma once
+#include "RequestHandler.h"
+
+#include <map>
 
 #include <Poco/Net/HTTPRequestHandler.h>
 #include <Poco/Net/HTTPRequestHandlerFactory.h>
-#include "RequestHandler.h"
-
-namespace http_server
-{
 
 class RequestHandlerFactory : public Poco::Net::HTTPRequestHandlerFactory
 {
-public:
-  virtual Poco::Net::HTTPRequestHandler* createRequestHandler(const Poco::Net::HTTPServerRequest &);
-};
+    typedef Poco::Net::HTTPRequestHandler* (*HandlerCreator)();
 
-}
+    static std::map<std::string, HandlerCreator> _handlers;
+    static Poco::Net::HTTPRequestHandler* getHandler(const std::string& func);
+
+public:
+    virtual Poco::Net::HTTPRequestHandler* createRequestHandler(const Poco::Net::HTTPServerRequest &);
+    static void Register(const std::string& func, const HandlerCreator& creator);
+};

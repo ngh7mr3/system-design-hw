@@ -7,10 +7,11 @@
     - [x] Dockerize
     - [ ] Add a constraint for `age` field ?
 - [ ] POCO REST service (C++)
-    - [ ] REST under `/person` endp.
-        - [ ] HTTP `GET` by login
-        - [ ] HTTP `GET` by first_name & last_name
-        - [ ] HTTP `POST` for root
+    - [x] REST under `/person` endp.
+        - [x] HTTP `GET` by login
+        - [x] HTTP `GET` by first_name & last_name
+        - [x] HTTP `POST` for root
             > POST parameters are: login, first_name, last_name and age.
+    - [ ] Link REST endpoints with db
     - [ ] Unit tests
     - [x] Dockerize

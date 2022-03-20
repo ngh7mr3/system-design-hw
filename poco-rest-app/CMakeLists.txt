@@ -14,7 +14,7 @@ link_directories("/usr/local/lib")
 
 SET (SERVER_BINARY "server")
 
-file(GLOB HTTP_SERVER_SOURCES "http_server/*.cpp")
+file(GLOB HTTP_SERVER_SOURCES "http_server/*.cpp" "http_server/handlers/*.cpp")
 
 add_executable(${SERVER_BINARY} ${HTTP_SERVER_SOURCES} main.cpp)
 add_executable(gtests tests.cpp)

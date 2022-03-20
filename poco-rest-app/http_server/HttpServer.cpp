@@ -2,6 +2,7 @@
 
 #include "HttpServer.h"
 #include "RequestHandlerFactory.h"
+#include "handlers/Person.h"
 
 #include <Poco/Net/HTTPServer.h>
 #include <Poco/Net/HTTPServerParams.h>
@@ -24,6 +25,7 @@ HttpServer::~HttpServer() {}
 void HttpServer::initialize(Application &self)
 {
     loadConfiguration();
+    RequestHandlerFactory::Register("/person", &PersonHandler::create);
     ServerApplication::initialize(self);
 }
 
