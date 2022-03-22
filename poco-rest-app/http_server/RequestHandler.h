@@ -20,6 +20,11 @@ protected:
   virtual void send(
       Poco::Net::HTTPServerResponse& resp,
       Poco::Net::HTTPResponse::HTTPStatus status,
+      Poco::JSON::Array::Ptr array);
+
+  virtual void send(
+      Poco::Net::HTTPServerResponse& resp,
+      Poco::Net::HTTPResponse::HTTPStatus status,
       const std::string& data = "\n");
 
   virtual std::string getParam(

@@ -1,4 +1,5 @@
 #include "Person.h"
+#include "../database/PersonScheme.h"
 
 using namespace Poco;
 using namespace Poco::Net;
@@ -13,39 +14,35 @@ HTTPRequestHandler* PersonHandler::create()
     return new PersonHandler();
 }
 
-void PersonHandler::getPersonByLogin(const std::string& login, Poco::Net::HTTPServerResponse& resp)
+void PersonHandler::getPersonByLogin(std::string& login, Poco::Net::HTTPServerResponse& resp)
 {
-    if (login == "admin")
+    try
     {
-        Poco::JSON::Object::Ptr ret = new Poco::JSON::Object();
-
-        ret->set(PersonHttpParam::Login, "admin");
-        ret->set(PersonHttpParam::FirstName, "Foo");
-        ret->set(PersonHttpParam::LastName, "Bar");
-        ret->set(PersonHttpParam::Age, "23");
-
-        send(resp, HTTPResponse::HTTP_OK, ret);
+        database::Person p = database::Person::get_by_login(login);
+        send(resp, HTTPResponse::HTTP_OK, p.toJSON());
     }
-    else {
-        send(resp, HTTPResponse::HTTP_NOT_FOUND, "Not found");
+    catch (std::logic_error& e)
+    {
+        send(resp, HTTPResponse::HTTP_NOT_FOUND, "Person not found");
     }
-
 }
 
-void PersonHandler::findPersonByMask(const std::string& first_name, const std::string& last_name, Poco::Net::HTTPServerResponse& resp)
+void PersonHandler::findPersonByMask(std::string& first_name, std::string& last_name, Poco::Net::HTTPServerResponse& resp)
 {
-    Poco::JSON::Object::Ptr ret = new Poco::JSON::Object();
-    ret->set(PersonHttpParam::FirstName, first_name);
-    ret->set(PersonHttpParam::LastName, last_name);
+    std::vector<database::Person> results = database::Person::search(first_name, last_name);    
 
-    send(resp, HTTPResponse::HTTP_OK, ret);
+    Poco::JSON::Array::Ptr arr = new Poco::JSON::Array();
+    for (auto i: results)
+        arr->add(i.toJSON());
+
+    send(resp, HTTPResponse::HTTP_OK, arr);
 }
 
 void PersonHandler::addPerson(
-    const std::string& login,
-    const std::string& first_name,
-    const std::string& last_name,
-    const std::string& age,
+    std::string& login,
+    std::string& first_name,
+    std::string& last_name,
+    std::string& age,
     Poco::Net::HTTPServerResponse& resp
 )
 {
@@ -60,7 +57,18 @@ void PersonHandler::addPerson(
         return;
     }
 
-    send(resp, HTTPResponse::HTTP_OK, Poco::format("Added new user %s %s %s %d", login, first_name, last_name, _age));
+    database::Person p(login, first_name, last_name, _age);
+    try
+    {
+        p.save_to_mysql();
+    }
+    catch (std::exception &e)
+    {
+        send(resp, HTTPResponse::HTTP_BAD_REQUEST, "Person already exists");
+        return;
+    }
+
+    send(resp, HTTPResponse::HTTP_OK, Poco::format("Added new person (%s, %s, %s, %d)", login, first_name, last_name, _age));
 }
 
 void PersonHandler::handleRequest(HTTPServerRequest& req, HTTPServerResponse& resp)

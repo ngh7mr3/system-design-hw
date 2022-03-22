@@ -12,6 +12,6 @@
         - [x] HTTP `GET` by first_name & last_name
         - [x] HTTP `POST` for root
             > POST parameters are: login, first_name, last_name and age.
-    - [ ] Link REST endpoints with db
+    - [x] Link REST endpoints with db
     - [ ] Unit tests
     - [x] Dockerize

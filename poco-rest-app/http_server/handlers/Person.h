@@ -11,13 +11,13 @@ class PersonHandler : public RequestHandler
 {
     PersonHandler(){};
 
-    void getPersonByLogin(const std::string& login, Poco::Net::HTTPServerResponse& resp);
-    void findPersonByMask(const std::string& first_name, const std::string& last_name, Poco::Net::HTTPServerResponse& resp);
+    void getPersonByLogin(std::string& login, Poco::Net::HTTPServerResponse& resp);
+    void findPersonByMask(std::string& first_name, std::string& last_name, Poco::Net::HTTPServerResponse& resp);
     void addPerson(
-        const std::string& login,
-        const std::string& first_name,
-        const std::string& last_name,
-        const std::string& age,
+        std::string& login,
+        std::string& first_name,
+        std::string& last_name,
+        std::string& age,
         Poco::Net::HTTPServerResponse& resp
     );
 

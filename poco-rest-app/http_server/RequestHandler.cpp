@@ -14,6 +14,15 @@ void RequestHandler::send(HTTPServerResponse& resp, HTTPResponse::HTTPStatus sta
     out.flush();
 }
 
+void RequestHandler::send(HTTPServerResponse& resp, HTTPResponse::HTTPStatus status, Poco::JSON::Array::Ptr array)
+{
+    resp.setStatus(status);
+    resp.setContentType("application/json");
+    std::ostream& out = resp.send();
+    Poco::JSON::Stringifier::stringify(array, out);
+    out.flush();
+}
+
 void RequestHandler::send(HTTPServerResponse& resp, HTTPResponse::HTTPStatus status, const std::string& data)
 {
     resp.setStatus(status);

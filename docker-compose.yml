@@ -1,7 +1,6 @@
 version: '3'
 
 services:
-
   mysql-db:
     build:
       context: mysql-db
@@ -14,3 +13,16 @@ services:
       MYSQL_DATABASE: 'stud'
       MYSQL_USER: 'stud'
       MYSQL_PASSWORD: 'stud'
+
+  poco-rest-app:
+    build:
+      context: poco-rest-app
+      dockerfile: Dockerfile
+    container_name: poco-rest-app
+    environment:
+      MYSQL_HOST: 'mysql-db'
+      MYSQL_DATABASE: 'stud'
+      MYSQL_USER: 'stud'
+      MYSQL_PASSWORD: 'stud'
+    ports:
+      - '8080:8080'
