@@ -5,7 +5,7 @@
     - [x] Table init (`Person` table)
         > Person should contain fields: login, first_name, last_name and age.
     - [x] Dockerize
-    - [ ] Add a constraint for `age` field ?
+    - [x] Add a constraint for `age` field ?
 - [ ] POCO REST service (C++)
     - [x] REST under `/person` endp.
         - [x] HTTP `GET` by login

@@ -4,7 +4,8 @@ CREATE TABLE `Person` (
   `login` varchar(255) NOT NULL,
   `first_name` varchar(255) NOT NULL,
   `last_name` varchar(255) NOT NULL,
-  `age` int NOT NULL
+  `age` int NOT NULL,
+  CHECK (`age`>=0)
 );
 
 INSERT INTO `Person` (`login`, `first_name`, `last_name`, `age`) VALUES
