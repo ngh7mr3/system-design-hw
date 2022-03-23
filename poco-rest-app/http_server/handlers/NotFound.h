@@ -2,7 +2,7 @@
 
 class NotFoundHandler : public RequestHandler
 {
-public:
+  public:
     NotFoundHandler(){};
-    void handleRequest(Poco::Net::HTTPServerRequest& req, Poco::Net::HTTPServerResponse& resp);
+    void handleRequest(Poco::Net::HTTPServerRequest &req, Poco::Net::HTTPServerResponse &resp);
 };

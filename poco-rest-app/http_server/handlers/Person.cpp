@@ -1,50 +1,47 @@
 #include "Person.h"
+
 #include "../database/PersonScheme.h"
 
 using namespace Poco;
 using namespace Poco::Net;
 
-const char* PersonHttpParam::Login = "login";
-const char* PersonHttpParam::FirstName = "first_name";
-const char* PersonHttpParam::LastName = "last_name";
-const char* PersonHttpParam::Age = "age";
+const char *PersonHttpParam::Login = "login";
+const char *PersonHttpParam::FirstName = "first_name";
+const char *PersonHttpParam::LastName = "last_name";
+const char *PersonHttpParam::Age = "age";
 
-HTTPRequestHandler* PersonHandler::create()
+HTTPRequestHandler *PersonHandler::create()
 {
     return new PersonHandler();
 }
 
-void PersonHandler::getPersonByLogin(std::string& login, Poco::Net::HTTPServerResponse& resp)
+void PersonHandler::getPersonByLogin(std::string &login, Poco::Net::HTTPServerResponse &resp)
 {
     try
     {
         database::Person p = database::Person::get_by_login(login);
         send(resp, HTTPResponse::HTTP_OK, p.toJSON());
     }
-    catch (std::logic_error& e)
+    catch (std::logic_error &e)
     {
         send(resp, HTTPResponse::HTTP_NOT_FOUND, "Person not found");
     }
 }
 
-void PersonHandler::findPersonByMask(std::string& first_name, std::string& last_name, Poco::Net::HTTPServerResponse& resp)
+void PersonHandler::findPersonByMask(std::string &first_name, std::string &last_name,
+                                     Poco::Net::HTTPServerResponse &resp)
 {
-    std::vector<database::Person> results = database::Person::search(first_name, last_name);    
+    std::vector<database::Person> results = database::Person::search(first_name, last_name);
 
     Poco::JSON::Array::Ptr arr = new Poco::JSON::Array();
-    for (auto i: results)
+    for (auto i : results)
         arr->add(i.toJSON());
 
     send(resp, HTTPResponse::HTTP_OK, arr);
 }
 
-void PersonHandler::addPerson(
-    std::string& login,
-    std::string& first_name,
-    std::string& last_name,
-    std::string& age,
-    Poco::Net::HTTPServerResponse& resp
-)
+void PersonHandler::addPerson(std::string &login, std::string &first_name, std::string &last_name, std::string &age,
+                              Poco::Net::HTTPServerResponse &resp)
 {
     int _age;
     try
@@ -68,10 +65,11 @@ void PersonHandler::addPerson(
         return;
     }
 
-    send(resp, HTTPResponse::HTTP_OK, Poco::format("Added new person (%s, %s, %s, %d)", login, first_name, last_name, _age));
+    send(resp, HTTPResponse::HTTP_OK,
+         Poco::format("Added new person (%s, %s, %s, %d)", login, first_name, last_name, _age));
 }
 
-void PersonHandler::handleRequest(HTTPServerRequest& req, HTTPServerResponse& resp)
+void PersonHandler::handleRequest(HTTPServerRequest &req, HTTPServerResponse &resp)
 {
     URI uri(req.getURI());
 
@@ -80,20 +78,36 @@ void PersonHandler::handleRequest(HTTPServerRequest& req, HTTPServerResponse& re
     std::string last_name = getParam(uri.getQueryParameters(), PersonHttpParam::LastName);
     std::string age = getParam(uri.getQueryParameters(), PersonHttpParam::Age);
 
-    switch (methodCode(req.getMethod())) {
-        case HTTPMethodCode::GET:
-            std::cout << "GET person" << std::endl;
-            if (!login.empty() && first_name.empty() && last_name.empty() && age.empty()) { getPersonByLogin(login, resp); }
-            else if (login.empty() && !first_name.empty() && !last_name.empty() && age.empty()) { findPersonByMask(first_name, last_name, resp); }
-            else { send(resp, HTTPResponse::HTTP_BAD_REQUEST, "Bad request"); }
-            break;
-        case HTTPMethodCode::POST:
-            std::cout << "POST person" << std::endl;
-            if (!(login.empty() || first_name.empty() || last_name.empty() || age.empty())) { addPerson(login, first_name, last_name, age, resp); }
-            else { send(resp, HTTPResponse::HTTP_BAD_REQUEST, "Bad request"); }
-            break;
-        default:
-            std::cout << req.getMethod() << " method not allowed" << std::endl;
-            send(resp, HTTPResponse::HTTP_METHOD_NOT_ALLOWED, "Method not allowed");
+    switch (methodCode(req.getMethod()))
+    {
+    case HTTPMethodCode::GET:
+        std::cout << "GET person" << std::endl;
+        if (!login.empty() && first_name.empty() && last_name.empty() && age.empty())
+        {
+            getPersonByLogin(login, resp);
+        }
+        else if (login.empty() && !first_name.empty() && !last_name.empty() && age.empty())
+        {
+            findPersonByMask(first_name, last_name, resp);
+        }
+        else
+        {
+            send(resp, HTTPResponse::HTTP_BAD_REQUEST, "Bad request");
+        }
+        break;
+    case HTTPMethodCode::POST:
+        std::cout << "POST person" << std::endl;
+        if (!(login.empty() || first_name.empty() || last_name.empty() || age.empty()))
+        {
+            addPerson(login, first_name, last_name, age, resp);
+        }
+        else
+        {
+            send(resp, HTTPResponse::HTTP_BAD_REQUEST, "Bad request");
+        }
+        break;
+    default:
+        std::cout << req.getMethod() << " method not allowed" << std::endl;
+        send(resp, HTTPResponse::HTTP_METHOD_NOT_ALLOWED, "Method not allowed");
     }
 }
