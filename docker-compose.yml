@@ -1,11 +1,11 @@
 version: '3'
 
 services:
-  mysql-db:
+  mysql-db-node-1:
     build:
       context: mysql-db
       dockerfile: Dockerfile
-    container_name: mysql-db
+    container_name: mysql-db-node-1
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
@@ -14,15 +14,41 @@ services:
       MYSQL_USER: 'stud'
       MYSQL_PASSWORD: 'stud'
 
+  mysql-db-node-2:
+    build:
+      context: mysql-db
+      dockerfile: Dockerfile
+    container_name: mysql-db-node-2
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_DATABASE: 'stud'
+      MYSQL_USER: 'stud'
+      MYSQL_PASSWORD: 'stud'
+
+  proxysql:
+    build:
+      context: proxysql
+      dockerfile: Dockerfile
+    container_name: proxysql
+    depends_on:
+      - mysql-db-node-1
+      - mysql-db-node-2
+    ports:
+      - 3306:3306
+
   poco-rest-app:
     build:
       context: poco-rest-app
       dockerfile: Dockerfile
     container_name: poco-rest-app
+    depends_on:
+      - proxysql
     environment:
-      MYSQL_HOST: 'mysql-db'
+      MYSQL_HOST: 'proxysql'
       MYSQL_DATABASE: 'stud'
       MYSQL_USER: 'stud'
       MYSQL_PASSWORD: 'stud'
     ports:
-      - '8080:8080'
+      - 8080:8080
