@@ -2,7 +2,6 @@ FROM ubuntu:20.04 as builder
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
-RUN apt-get upgrade
 RUN apt-get install -yq build-essential autoconf libtool git\
                             pkg-config gcc g++ cmake \
                             libssl-dev zlib1g-dev librdkafka-dev libmysqlclient-dev libboost-all-dev
