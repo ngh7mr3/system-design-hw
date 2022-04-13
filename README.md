@@ -30,3 +30,6 @@ Wait until DB is up (didn't unclude `depends_on` in docker compose file, current
 ```bash
 python3 test.py
 ```
+
+# hw 2
+- [ ] Add sharding on each `Person` by `login`
