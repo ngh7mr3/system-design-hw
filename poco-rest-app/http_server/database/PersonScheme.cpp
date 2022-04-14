@@ -46,20 +46,25 @@ std::vector<Person> Person::read_all()
     try
     {
         Poco::Data::Session session = database::Database::get().create_session();
-        Poco::Data::Statement select(session);
         std::vector<Person> result;
 
         Person a;
 
-        select << "SELECT login, first_name, last_name, age FROM Person", Poco::Data::Keywords::into(a._login),
-            Poco::Data::Keywords::into(a._first_name), Poco::Data::Keywords::into(a._last_name),
-            Poco::Data::Keywords::into(a._age), Poco::Data::Keywords::range(0, 1);
-
-        while (!select.done())
+        for (size_t shard_idx = 0; shard_idx < database::Database::get().number_of_shards; ++shard_idx)
         {
-            if (select.execute())
-                result.push_back(a);
+            Poco::Data::Statement select(session);
+            select << "SELECT login, first_name, last_name, age FROM Person" + database::Database::get().get_sharding_hint(shard_idx),
+                Poco::Data::Keywords::into(a._login),
+                Poco::Data::Keywords::into(a._first_name), Poco::Data::Keywords::into(a._last_name),
+                Poco::Data::Keywords::into(a._age), Poco::Data::Keywords::range(0, 1);
+
+            while (!select.done())
+            {
+                if (select.execute())
+                    result.push_back(a);
+            }
         }
+
         return result;
     }
     catch (const std::exception &e)
@@ -79,7 +84,6 @@ std::vector<Person> Person::search(std::string &first_name, std::string &last_na
     try
     {
         Poco::Data::Session session = database::Database::get().create_session();
-        Poco::Data::Statement select(session);
         std::vector<Person> result;
 
         Person a;
@@ -87,17 +91,21 @@ std::vector<Person> Person::search(std::string &first_name, std::string &last_na
         first_name += "%";
         last_name += "%";
 
-        select << "SELECT login, first_name, last_name, age FROM Person where "
-                  "first_name LIKE ? and last_name LIKE ?",
-            Poco::Data::Keywords::into(a._login), Poco::Data::Keywords::into(a._first_name),
-            Poco::Data::Keywords::into(a._last_name), Poco::Data::Keywords::into(a._age),
-            Poco::Data::Keywords::use(first_name), Poco::Data::Keywords::use(last_name),
-            Poco::Data::Keywords::range(0, 1);
-
-        while (!select.done())
+        for (size_t shard_idx = 0; shard_idx < database::Database::get().number_of_shards; ++shard_idx)
         {
-            if (select.execute())
-                result.push_back(a);
+            Poco::Data::Statement select(session);
+            select << "SELECT login, first_name, last_name, age FROM Person where "
+                      "first_name LIKE ? and last_name LIKE ?" + database::Database::get().get_sharding_hint(shard_idx),
+                Poco::Data::Keywords::into(a._login), Poco::Data::Keywords::into(a._first_name),
+                Poco::Data::Keywords::into(a._last_name), Poco::Data::Keywords::into(a._age),
+                Poco::Data::Keywords::use(first_name), Poco::Data::Keywords::use(last_name),
+                Poco::Data::Keywords::range(0, 1);
+
+            while (!select.done())
+            {
+                if (select.execute())
+                    result.push_back(a);
+            }
         }
 
         return result;
