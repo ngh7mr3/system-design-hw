@@ -32,6 +32,6 @@ python3 test.py
 ```
 
 # hw 2
-- [ ] Add sharding on each `Person` by `login`
+- [x] Add sharding on each `Person` by `login`
     - [x] Configure proxysql
-    - [ ] Add sharding hint to `Person` handlers
+    - [x] Add sharding hint to `Person` handlers
