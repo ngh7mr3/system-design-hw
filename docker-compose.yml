@@ -47,8 +47,10 @@ services:
       - proxysql
     environment:
       MYSQL_HOST: 'proxysql'
+      MYSQL_PORT: '6033'
       MYSQL_DATABASE: 'stud'
       MYSQL_USER: 'stud'
       MYSQL_PASSWORD: 'stud'
+      SHARDS_NUMBER: '2'
     ports:
       - 8080:8080

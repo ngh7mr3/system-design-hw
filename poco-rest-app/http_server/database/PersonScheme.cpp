@@ -1,7 +1,6 @@
 #include "PersonScheme.h"
 
 #include <exception>
-// #include <Poco/Dynamic/Var.h>
 #include <Poco/Data/RecordSet.h>
 
 namespace database
@@ -14,12 +13,14 @@ Person Person::get_by_login(std::string &login)
         Poco::Data::Statement select(session);
 
         Person a;
+        std::string sharding_hint = database::Database::get().get_sharding_hint(database::Database::get().calc_shard_number(login));
 
-        select << "SELECT login, first_name, last_name, age FROM Person where "
-                  "login=?",
+        select << "SELECT login, first_name, last_name, age FROM Person where login=?" + sharding_hint,
             Poco::Data::Keywords::into(a._login), Poco::Data::Keywords::into(a._first_name),
             Poco::Data::Keywords::into(a._last_name), Poco::Data::Keywords::into(a._age),
             Poco::Data::Keywords::use(login), Poco::Data::Keywords::range(0, 1);
+
+        std::cout << Poco::format("[get_by_login] -> [%s] -> goes to %s", login, sharding_hint) << std::endl;
 
         select.execute();
         Poco::Data::RecordSet rs(select);
@@ -120,14 +121,15 @@ void Person::save_to_mysql()
         Poco::Data::Session session = database::Database::get().create_session();
         Poco::Data::Statement insert(session);
 
-        insert << "INSERT INTO Person (login, first_name, last_name, age) "
-                  "VALUES(?, ?, ?, ?)",
+        std::string sharding_hint = database::Database::get().get_sharding_hint(database::Database::get().calc_shard_number(_login));
+
+        insert << "INSERT INTO Person (login, first_name, last_name, age) VALUES(?, ?, ?, ?)" + sharding_hint,
             Poco::Data::Keywords::use(_login), Poco::Data::Keywords::use(_first_name),
             Poco::Data::Keywords::use(_last_name), Poco::Data::Keywords::use(_age),
 
             insert.execute();
 
-        std::cout << "inserted:" << _login << std::endl;
+        std::cout << Poco::format("[save_to_mysql] -> [%s] -> goes to %s", _login, sharding_hint) << std::endl;
     }
     catch (const std::exception &e)
     {
