@@ -1,7 +1,7 @@
 #include "PersonScheme.h"
 
-#include <exception>
 #include <Poco/Data/RecordSet.h>
+#include <exception>
 
 namespace database
 {
@@ -13,7 +13,8 @@ Person Person::get_by_login(std::string &login)
         Poco::Data::Statement select(session);
 
         Person a;
-        std::string sharding_hint = database::Database::get().get_sharding_hint(database::Database::get().calc_shard_number(login));
+        std::string sharding_hint =
+            database::Database::get().get_sharding_hint(database::Database::get().calc_shard_number(login));
 
         select << "SELECT login, first_name, last_name, age FROM Person where login=?" + sharding_hint,
             Poco::Data::Keywords::into(a._login), Poco::Data::Keywords::into(a._first_name),
@@ -53,10 +54,11 @@ std::vector<Person> Person::read_all()
         for (size_t shard_idx = 0; shard_idx < database::Database::get().number_of_shards; ++shard_idx)
         {
             Poco::Data::Statement select(session);
-            select << "SELECT login, first_name, last_name, age FROM Person" + database::Database::get().get_sharding_hint(shard_idx),
-                Poco::Data::Keywords::into(a._login),
-                Poco::Data::Keywords::into(a._first_name), Poco::Data::Keywords::into(a._last_name),
-                Poco::Data::Keywords::into(a._age), Poco::Data::Keywords::range(0, 1);
+            select << "SELECT login, first_name, last_name, age FROM Person" +
+                          database::Database::get().get_sharding_hint(shard_idx),
+                Poco::Data::Keywords::into(a._login), Poco::Data::Keywords::into(a._first_name),
+                Poco::Data::Keywords::into(a._last_name), Poco::Data::Keywords::into(a._age),
+                Poco::Data::Keywords::range(0, 1);
 
             while (!select.done())
             {
@@ -95,7 +97,8 @@ std::vector<Person> Person::search(std::string &first_name, std::string &last_na
         {
             Poco::Data::Statement select(session);
             select << "SELECT login, first_name, last_name, age FROM Person where "
-                      "first_name LIKE ? and last_name LIKE ?" + database::Database::get().get_sharding_hint(shard_idx),
+                      "first_name LIKE ? and last_name LIKE ?" +
+                          database::Database::get().get_sharding_hint(shard_idx),
                 Poco::Data::Keywords::into(a._login), Poco::Data::Keywords::into(a._first_name),
                 Poco::Data::Keywords::into(a._last_name), Poco::Data::Keywords::into(a._age),
                 Poco::Data::Keywords::use(first_name), Poco::Data::Keywords::use(last_name),
@@ -129,7 +132,8 @@ void Person::save_to_mysql()
         Poco::Data::Session session = database::Database::get().create_session();
         Poco::Data::Statement insert(session);
 
-        std::string sharding_hint = database::Database::get().get_sharding_hint(database::Database::get().calc_shard_number(_login));
+        std::string sharding_hint =
+            database::Database::get().get_sharding_hint(database::Database::get().calc_shard_number(_login));
 
         insert << "INSERT INTO Person (login, first_name, last_name, age) VALUES(?, ?, ?, ?)" + sharding_hint,
             Poco::Data::Keywords::use(_login), Poco::Data::Keywords::use(_first_name),

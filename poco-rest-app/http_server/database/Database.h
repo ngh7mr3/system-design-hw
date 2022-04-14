@@ -3,8 +3,8 @@
 #include <Poco/Data/MySQL/MySQLException.h>
 #include <Poco/Data/SessionFactory.h>
 
-#include <string>
 #include <functional>
+#include <string>
 
 namespace database
 {

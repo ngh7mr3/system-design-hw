@@ -8,10 +8,9 @@ Database::Database()
 {
     // TODO: move out getenv to config?
     _connection_string =
-        Poco::format("host=%s;port=%s;user=%s;db=%s;password=%s",
-                     std::string(std::getenv("MYSQL_HOST")), std::string(std::getenv("MYSQL_PORT")),
-                     std::string(std::getenv("MYSQL_DATABASE")), std::string(std::getenv("MYSQL_USER")),
-                     std::string(std::getenv("MYSQL_PASSWORD")));
+        Poco::format("host=%s;port=%s;user=%s;db=%s;password=%s", std::string(std::getenv("MYSQL_HOST")),
+                     std::string(std::getenv("MYSQL_PORT")), std::string(std::getenv("MYSQL_DATABASE")),
+                     std::string(std::getenv("MYSQL_USER")), std::string(std::getenv("MYSQL_PASSWORD")));
     number_of_shards = (size_t)std::stoi(std::string(std::getenv("SHARDS_NUMBER")));
     Poco::Data::MySQL::Connector::registerConnector();
 }
