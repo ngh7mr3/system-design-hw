@@ -1,3 +1,5 @@
+from re import I
+from numpy import number
 import requests as r
 import argparse
 import random
@@ -35,7 +37,7 @@ def test_person_scheme(base_url):
     def test_search_person():
         req = r.get(url, params=dict(first_name='foo', last_name='bar'))
         assert req.status_code == r.codes.ok
-        assert len(req.json()) == 1
+        assert len(req.json()) == 2 # sharding
         assert req.json()[0]['login'] == 'admin'
 
         req = r.get(url, params=dict(first_name='name', last_name='name'))
@@ -62,10 +64,23 @@ def test_person_scheme(base_url):
         req = r.post(url, params=USER_NONVALID)
         assert req.status_code == r.codes.bad_request
 
+    @test_wrapper
+    def test_sharding_consistency(number_of_users=1000):
+        users = [rnd_s(10) for _ in range(number_of_users)]
+
+        for user in users:
+            req = r.post(url, params=dict(login=user, first_name=user, last_name=user, age=42))
+            assert req.status_code == r.codes.ok
+
+        for user in users:
+            req = r.get(url, params=dict(login=user))
+            assert req.status_code == r.codes.ok
+            assert req.json()['login'] == user
+
     test_get_person()
     test_search_person()
     test_add_new_person()
-
+    test_sharding_consistency()
 
 if __name__ == '__main__':
     args = parser.parse_args()
