@@ -30,3 +30,9 @@ Wait until DB is up (didn't unclude `depends_on` in docker compose file, current
 ```bash
 python3 test.py
 ```
+
+# hw3
+- [ ] Implement caching
+    - [ ] Add redis image
+    - [ ] Add client for redis
+    - [ ] Cache requests
