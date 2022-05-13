@@ -11,7 +11,7 @@ endif()
 
 include_directories(${Poco_INCLUDE_DIRS})
 include_directories("/usr/include/mysql")
-include_directories("/usr/local/include/mysql")
+include_directories("/usr/local/include")
 link_directories("/usr/local/lib")
 
 SET (SERVER_BINARY "server")
@@ -34,7 +34,10 @@ target_link_libraries(${SERVER_BINARY} PRIVATE
                              Poco::JSON
                              Poco::Data
                              "PocoDataMySQL"
-                             "mysqlclient")
+                             "mysqlclient"
+                             "cpp_redis"
+                             "tacopie"
+                             "pthread")
 target_link_libraries(gtests ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
 set_target_properties(${SERVER_BINARY} gtests PROPERTIES LINKER_LANGUAGE CXX)

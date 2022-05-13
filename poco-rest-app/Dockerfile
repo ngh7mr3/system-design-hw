@@ -15,6 +15,10 @@ RUN cd
 RUN git clone -b master https://github.com/pocoproject/poco.git
 RUN cd poco && mkdir cmake-build && cd cmake-build && cmake .. && cmake --build . --config Release && cmake --build . --target install
 
+# build redis-cpp
+RUN cd
+RUN git clone https://github.com/cpp-redis/cpp_redis.git && cd cpp_redis && git submodule init && git submodule update && mkdir build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && make && make install
+
 FROM builder as src
 COPY . /server
 RUN cd /server && mkdir bin && cd bin && cmake .. && cmake --build . --target install

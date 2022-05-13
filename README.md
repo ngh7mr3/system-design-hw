@@ -34,5 +34,5 @@ python3 test.py
 # hw3
 - [ ] Implement caching
     - [x] Add redis image
-    - [ ] Add client for redis
+    - [x] Add client for redis
     - [ ] Cache requests
