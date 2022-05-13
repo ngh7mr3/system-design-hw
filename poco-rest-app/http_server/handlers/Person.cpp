@@ -53,7 +53,7 @@ void PersonHandler::findPersonByMask(std::string &first_name, std::string &last_
     {
         std::cout << "return cached response for findPersonByMask" << std::endl;
         send(resp, HTTPResponse::HTTP_OK, cached_response);
-        return; 
+        return;
     }
 
     std::vector<database::Person> results = database::Person::search(first_name, last_name);

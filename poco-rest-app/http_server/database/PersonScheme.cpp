@@ -1,8 +1,7 @@
 #include "PersonScheme.h"
 
-#include <exception>
-// #include <Poco/Dynamic/Var.h>
 #include <Poco/Data/RecordSet.h>
+#include <exception>
 
 namespace database
 {
