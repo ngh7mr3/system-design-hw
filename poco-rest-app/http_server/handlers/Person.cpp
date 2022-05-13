@@ -1,5 +1,6 @@
 #include "Person.h"
 
+#include "../database/Cache.h"
 #include "../database/PersonScheme.h"
 
 using namespace Poco;
@@ -19,11 +20,25 @@ void PersonHandler::getPersonByLogin(std::string &login, Poco::Net::HTTPServerRe
 {
     try
     {
+        Poco::JSON::Object::Ptr cached_response = cache::Redis::json_storage().get(login);
+
+        if (cached_response->size() != 0)
+        {
+            std::cout << "return cached response for getPersonByLogin" << std::endl;
+            send(resp, HTTPResponse::HTTP_OK, cached_response);
+            return;
+        }
+
         database::Person p = database::Person::get_by_login(login);
-        send(resp, HTTPResponse::HTTP_OK, p.toJSON());
+        Poco::JSON::Object::Ptr json_resp = p.toJSON();
+        send(resp, HTTPResponse::HTTP_OK, json_resp);
+
+        std::cout << "getPersonByLogin: save response to cache" << std::endl;
+        cache::Redis::json_storage().set(login, json_resp);
     }
     catch (std::logic_error &e)
     {
+        std::cout << "got exception: " << e.what() << std::endl;
         send(resp, HTTPResponse::HTTP_NOT_FOUND, "Person not found");
     }
 }
@@ -31,13 +46,29 @@ void PersonHandler::getPersonByLogin(std::string &login, Poco::Net::HTTPServerRe
 void PersonHandler::findPersonByMask(std::string &first_name, std::string &last_name,
                                      Poco::Net::HTTPServerResponse &resp)
 {
+    std::string cache_key = Poco::format("mask_%s_%s", first_name, last_name);
+    Poco::JSON::Object::Ptr cached_response = cache::Redis::json_storage().get(cache_key);
+
+    if (cached_response->size() != 0)
+    {
+        std::cout << "return cached response for findPersonByMask" << std::endl;
+        send(resp, HTTPResponse::HTTP_OK, cached_response);
+        return; 
+    }
+
     std::vector<database::Person> results = database::Person::search(first_name, last_name);
 
     Poco::JSON::Array::Ptr arr = new Poco::JSON::Array();
     for (auto i : results)
         arr->add(i.toJSON());
 
-    send(resp, HTTPResponse::HTTP_OK, arr);
+    Poco::JSON::Object::Ptr json_resp = new Poco::JSON::Object();
+    json_resp->set("result", arr);
+
+    send(resp, HTTPResponse::HTTP_OK, json_resp);
+
+    std::cout << "findPersonByMask: save response to cache" << std::endl;
+    cache::Redis::json_storage().set(cache_key, json_resp);
 }
 
 void PersonHandler::addPerson(std::string &login, std::string &first_name, std::string &last_name, std::string &age,

@@ -32,7 +32,7 @@ python3 test.py
 ```
 
 # hw3
-- [ ] Implement caching
+- [x] Implement caching
     - [x] Add redis image
     - [x] Add client for redis
-    - [ ] Cache requests
+    - [x] Cache requests

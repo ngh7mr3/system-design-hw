@@ -35,12 +35,12 @@ def test_person_scheme(base_url):
     def test_search_person():
         req = r.get(url, params=dict(first_name='foo', last_name='bar'))
         assert req.status_code == r.codes.ok
-        assert len(req.json()) == 1
-        assert req.json()[0]['login'] == 'admin'
+        assert len(req.json()['result']) == 1
+        assert req.json()['result'][0]['login'] == 'admin'
 
         req = r.get(url, params=dict(first_name='name', last_name='name'))
         assert req.status_code == r.codes.ok
-        assert len(req.json()) == 0
+        assert len(req.json()['result']) == 0
         
         req = r.get(url, params=dict(login='admin', first_name='foo'))
         assert req.status_code == r.codes.bad_request
