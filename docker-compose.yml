@@ -30,6 +30,7 @@ services:
       MYSQL_DATABASE: 'stud'
       MYSQL_USER: 'stud'
       MYSQL_PASSWORD: 'stud'
+      CACHE_ENABLED: 'true'
       REDIS_HOST: 'redis-cache'
       REDIS_PORT: '6379'
     depends_on:

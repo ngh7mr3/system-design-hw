@@ -11,6 +11,7 @@ namespace cache
 class Redis
 {
   private:
+    bool _enabled;
     std::string _host, _port;
     cpp_redis::client _client;
     Redis();
