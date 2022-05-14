@@ -30,3 +30,9 @@ Wait until DB is up (didn't unclude `depends_on` in docker compose file, current
 ```bash
 python3 test.py
 ```
+
+# hw 4
+- [ ] SQL writer through a broker (RabbitMQ)
+    - [ ] Add RabbitMQ image with basic setup
+    - [ ] Separate writer thread from main server thread
+    - [ ] Implement writer
