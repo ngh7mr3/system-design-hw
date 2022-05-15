@@ -35,4 +35,6 @@ python3 test.py
 - [ ] SQL writer through a broker (RabbitMQ)
     - [x] Add RabbitMQ image with basic setup
     - [x] Separate writer thread from main server thread
-    - [ ] Implement writer
+    - [ ] Add basic rabbitmq lib to produce/consume
+        - [ ] Implement producer logic
+        - [ ] Implement consumer logic
