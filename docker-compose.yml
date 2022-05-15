@@ -14,6 +14,16 @@ services:
       MYSQL_USER: 'stud'
       MYSQL_PASSWORD: 'stud'
 
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: 'stud'
+      RABBITMQ_DEFAULT_PASS: 'stud'
+    ports:
+      - '15672:15672'
+
   poco-rest-app:
     build:
       context: poco-rest-app
@@ -24,5 +34,12 @@ services:
       MYSQL_DATABASE: 'stud'
       MYSQL_USER: 'stud'
       MYSQL_PASSWORD: 'stud'
+      RABBITMQ_HOST: 'rabbitmq'
+      RABBITMQ_PORT: '5672'
+      RABBITMQ_USER: 'stud'
+      RABBITMQ_PASSWORD: 'stud'
+    depends_on:
+      - mysql-db
+      - rabbitmq
     ports:
       - '8080:8080'

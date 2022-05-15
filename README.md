@@ -33,6 +33,6 @@ python3 test.py
 
 # hw 4
 - [ ] SQL writer through a broker (RabbitMQ)
-    - [ ] Add RabbitMQ image with basic setup
+    - [x] Add RabbitMQ image with basic setup
     - [ ] Separate writer thread from main server thread
     - [ ] Implement writer
