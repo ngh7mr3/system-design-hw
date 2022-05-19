@@ -13,13 +13,14 @@ void AmqpConsumer::run()
     std::string consumer = channel->BasicConsume(queue);
     AmqpClient::Envelope::ptr_t env;
 
-    while(true)
+    while (true)
     {
         channel->BasicConsumeMessage(consumer, env, -1);
         std::string message_body = env->Message()->Body();
         std::cout << "[consumer][msg] " << message_body << std::endl;
 
-        try {
+        try
+        {
             Poco::JSON::Parser parser;
             Poco::Dynamic::Var result = parser.parse(message_body);
             Poco::JSON::Object::Ptr person_json = result.extract<Poco::JSON::Object::Ptr>();
@@ -33,5 +34,4 @@ void AmqpConsumer::run()
             std::cout << "[consumer] cannot save new person" << std::endl;
         }
     }
-
 }

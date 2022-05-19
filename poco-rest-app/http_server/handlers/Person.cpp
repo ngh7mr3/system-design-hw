@@ -1,8 +1,8 @@
 #include "Person.h"
 #include <exception>
 
-#include "../database/PersonScheme.h"
 #include "../amqp/AmqpConfig.h"
+#include "../database/PersonScheme.h"
 
 using namespace amqp;
 using namespace Poco;
@@ -50,7 +50,7 @@ void PersonHandler::addPerson(std::string &login, std::string &first_name, std::
     try
     {
         _age = std::stoi(age);
-        if (_age < 0) 
+        if (_age < 0)
             throw std::logic_error("age could not be lower than zero");
     }
     catch (...)

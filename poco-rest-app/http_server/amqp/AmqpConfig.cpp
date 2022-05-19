@@ -7,9 +7,7 @@ AmqpConfig::AmqpConfig()
 {
     _opts.host = getenv("RABBITMQ_HOST");
     _opts.port = std::stoi(getenv("RABBITMQ_PORT"));
-    _opts.auth = AmqpClient::Channel::OpenOpts::BasicAuth(
-        getenv("RABBITMQ_USER"), getenv("RABBITMQ_PASSWORD")
-    );
+    _opts.auth = AmqpClient::Channel::OpenOpts::BasicAuth(getenv("RABBITMQ_USER"), getenv("RABBITMQ_PASSWORD"));
 
     _default_queue = getenv("RABBITMQ_EXCHANGE_QUEUE");
 }
