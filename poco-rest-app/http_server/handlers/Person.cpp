@@ -1,4 +1,5 @@
 #include "Person.h"
+#include <exception>
 
 #include "../database/PersonScheme.h"
 #include "../amqp/AmqpConfig.h"
@@ -49,6 +50,8 @@ void PersonHandler::addPerson(std::string &login, std::string &first_name, std::
     try
     {
         _age = std::stoi(age);
+        if (_age < 0) 
+            throw std::logic_error("age could not be lower than zero");
     }
     catch (...)
     {
@@ -59,13 +62,13 @@ void PersonHandler::addPerson(std::string &login, std::string &first_name, std::
     database::Person p(login, first_name, last_name, _age);
     try
     {
-        // producer
-        // p.toJSON() -> send to queue -> queue will consume
         AmqpClient::Channel::ptr_t channel = AmqpConfig::get().createChannel();
-        AmqpClient::BasicMessage::ptr_t message = AmqpClient::BasicMessage::Create(Poco::format("new user: %s", login));
-        channel->BasicPublish("", "tmp", message);
 
-        p.save_to_mysql(); // to remove 
+        std::ostringstream oss;
+        Poco::JSON::Stringifier::stringify(p.toJSON(), oss);
+        AmqpClient::BasicMessage::ptr_t message = AmqpClient::BasicMessage::Create(oss.str());
+
+        channel->BasicPublish("", AmqpConfig::get().getDefaultQueue(), message);
     }
     catch (std::exception &e)
     {

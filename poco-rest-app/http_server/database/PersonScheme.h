@@ -20,6 +20,7 @@ class Person
         : _login(login), _first_name(first_name), _last_name(last_name), _age(age)
     {
     }
+    Person(Poco::JSON::Object::Ptr json_object);
 
     const std::string &get_login() const;
     const std::string &get_first_name() const;

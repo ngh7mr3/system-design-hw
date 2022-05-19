@@ -32,10 +32,10 @@ python3 test.py
 ```
 
 # hw 4
-- [ ] SQL writer through a broker (RabbitMQ)
+- [x] SQL writer through a broker (RabbitMQ)
     - [x] Add RabbitMQ image with basic setup
     - [x] Separate writer thread from main server thread
-    - [ ] Add basic rabbitmq lib to produce/consume
+    - [x] Add basic rabbitmq lib to produce/consume
         - [x] Install and test amqp library
-        - [ ] Implement producer logic
-        - [ ] Implement consumer logic
+        - [x] Implement producer logic
+        - [x] Implement consumer logic

@@ -1,11 +1,18 @@
 #include "PersonScheme.h"
 
 #include <exception>
-// #include <Poco/Dynamic/Var.h>
 #include <Poco/Data/RecordSet.h>
 
 namespace database
 {
+Person::Person(Poco::JSON::Object::Ptr json_object)
+{
+    _login = json_object->get("login").toString();
+    _first_name = json_object->get("first_name").toString();
+    _last_name = json_object->get("last_name").toString();
+    _age = std::stoi(json_object->get("age").toString());
+}
+
 Person Person::get_by_login(std::string &login)
 {
     try
