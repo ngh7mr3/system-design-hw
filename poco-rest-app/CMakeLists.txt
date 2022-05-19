@@ -16,7 +16,7 @@ link_directories("/usr/local/lib")
 
 SET (SERVER_BINARY "server")
 
-file(GLOB HTTP_SERVER_SOURCES "http_server/*.cpp" "http_server/handlers/*.cpp" "http_server/database/*.cpp")
+file(GLOB HTTP_SERVER_SOURCES "http_server/*.cpp" "http_server/handlers/*.cpp" "http_server/database/*.cpp" "http_server/amqp/*.cpp")
 
 add_executable(${SERVER_BINARY} ${HTTP_SERVER_SOURCES} main.cpp)
 add_executable(gtests tests.cpp)
@@ -34,7 +34,8 @@ target_link_libraries(${SERVER_BINARY} PRIVATE
                              Poco::JSON
                              Poco::Data
                              "PocoDataMySQL"
-                             "mysqlclient")
+                             "mysqlclient"
+                             "SimpleAmqpClient")
 target_link_libraries(gtests ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
 set_target_properties(${SERVER_BINARY} gtests PROPERTIES LINKER_LANGUAGE CXX)

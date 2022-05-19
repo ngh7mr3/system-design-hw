@@ -15,6 +15,17 @@ RUN cd
 RUN git clone -b master https://github.com/pocoproject/poco.git
 RUN cd poco && mkdir cmake-build && cd cmake-build && cmake .. && cmake --build . --config Release && cmake --build . --target install
 
+
+# build rabbitmq-c
+RUN cd
+RUN git clone https://github.com/alanxz/rabbitmq-c.git
+RUN cd rabbitmq-c && mkdir cmake-build && cd cmake-build && cmake .. && cmake --build . --config Release && cmake --build . --target install
+
+# build SimpleAmqpClient
+RUN cd
+RUN git clone https://github.com/alanxz/SimpleAmqpClient.git
+RUN cd SimpleAmqpClient && mkdir cmake-build && cd cmake-build && cmake .. && cmake --build . --config Release && cmake --build . --target install
+
 FROM builder as src
 COPY . /server
 RUN cd /server && mkdir bin && cd bin && cmake .. && cmake --build . --target install

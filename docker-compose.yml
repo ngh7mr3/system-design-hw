@@ -29,6 +29,7 @@ services:
       context: poco-rest-app
       dockerfile: Dockerfile
     container_name: poco-rest-app
+    restart: on-failure
     environment:
       MYSQL_HOST: 'mysql-db'
       MYSQL_DATABASE: 'stud'
@@ -38,6 +39,7 @@ services:
       RABBITMQ_PORT: '5672'
       RABBITMQ_USER: 'stud'
       RABBITMQ_PASSWORD: 'stud'
+      RABBITMQ_EXCHANGE_QUEUE: 'new_users'
     depends_on:
       - mysql-db
       - rabbitmq

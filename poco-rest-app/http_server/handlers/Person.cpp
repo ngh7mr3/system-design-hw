@@ -1,7 +1,9 @@
 #include "Person.h"
 
 #include "../database/PersonScheme.h"
+#include "../amqp/AmqpConfig.h"
 
+using namespace amqp;
 using namespace Poco;
 using namespace Poco::Net;
 
@@ -57,7 +59,13 @@ void PersonHandler::addPerson(std::string &login, std::string &first_name, std::
     database::Person p(login, first_name, last_name, _age);
     try
     {
-        p.save_to_mysql();
+        // producer
+        // p.toJSON() -> send to queue -> queue will consume
+        AmqpClient::Channel::ptr_t channel = AmqpConfig::get().createChannel();
+        AmqpClient::BasicMessage::ptr_t message = AmqpClient::BasicMessage::Create(Poco::format("new user: %s", login));
+        channel->BasicPublish("", "tmp", message);
+
+        p.save_to_mysql(); // to remove 
     }
     catch (std::exception &e)
     {
